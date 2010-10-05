@@ -44,12 +44,12 @@ function! PySmartIndent()
 endfunction
 
 function! SmartTab()
-	let lastchar = strpart(getline('.'), col('.')-2)
-	if empty(lastchar) || lastchar == '	' | return "	" | endif
+	let before = strpart(getline('.'), 0, col('.')-1)
+	if before =~ '^\t*$' | return "	" | endif
 	let sts=exists("b:insidetabs")?(b:insidetabs):((&sts==0)?&sw:&sts)
 	let sp=(virtcol('.') % sts)
 	if sp==0 | let sp=sts | endif
-	return strpart("                          ",0,1+sts-sp)
+	return strpart("                                     ",0,1+sts-sp)
 endfunction
 
 function! SmartDelete()
@@ -58,5 +58,6 @@ endfunction
 
 autocmd BufEnter *.c,*.cpp inoremap <CR> <C-R>=CSmartIndent()<CR>
 autocmd BufEnter *.py inoremap <CR> <C-R>=PySmartIndent()<CR>
+inoremap <S-TAB> <TAB>
 inoremap <TAB> <C-R>=SmartTab()<CR>
 inoremap <BS> <C-R>=SmartDelete()<CR>
